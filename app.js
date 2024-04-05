@@ -24,6 +24,8 @@ app.use(
     },
   })
 );
+var enquiryRouter = require("./routes/enquiry");
+
 app.use((req, res, next) => {
   const allowedOriginsWithCredentials = [
     "http://localhost:5173",
@@ -52,8 +54,9 @@ mongoose
     console.error("MongoDB connection error:", error);
   });
 
+app.use("/enquiry", enquiryRouter);
 
-  //these middleware should at last but before error handlers
+//these middleware should at last but before error handlers
 app.use("*", (req, res, next) => {
   const err = new Error(`Can't find ${req.originalUrl} on the server`);
   err.status = "fail";
