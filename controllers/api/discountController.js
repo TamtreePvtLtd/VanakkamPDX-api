@@ -3,47 +3,50 @@
  * @typedef {import('express').Response} Response
  */
 
-const EnquiryModel = require("../../database/models/enquiry");
+// const EnquiryModel = require("../../database/models/enquiry");
 const nodemailer = require("nodemailer");
 /**
  * @param {Request} req - The Express request object
  * @param {Response} res - The Express response object
  */
 
-exports.createEnquiry = async (req, res, next) => {
+exports.createDiscount = async (req, res, next) => {
   try {
-    const enquiryData = req.body;
+        const enquiryData = req.body;
+        console.log("enquiryData", enquiryData);
 
-    const enquiry = {
-      fullName: enquiryData.fullName,
-      email: enquiryData.email,
-      mobileNumber: enquiryData.mobileNumber,
-      message: enquiryData.message,
-      guestCount: enquiryData.guestCount,
-      typeOfEvent: enquiryData.typeOfEvent,
-      eventDate: new Date(enquiryData.eventDate),
-    };
+//     const enquiry = {
+//       firstName: enquiryData.firstName,
+//       lastName: enquiryData.lastName,
+//       email: enquiryData.email,
+//       mobileNumber: enquiryData.mobileNumber,
+//     };
 
     // const newEnquiry = await EnquiryModel.create(enquiry);
-    const eventDate = new Date(enquiryData.eventDate);
+//     const eventDate = new Date(enquiryData.eventDate);
 
-    const formattedDate = `${eventDate.toLocaleDateString()} `;
+//     const formattedDate = `${eventDate.toLocaleDateString()} `;
 
     const eventDetailEmailContent = `
       <html>
         <body>
          
-          <p>Full Name: ${enquiryData.fullName}</p>
+          <p>Full Name: ${enquiryData.firstName}</p>
+           <p>Full Name: ${enquiryData.lastName}</p>
           <p>Email: ${enquiryData.email}</p>
           <p>Mobile Number: ${enquiryData.mobileNumber}</p>
-          <p>Message: ${enquiryData.message}</p>
-          <p>Guest Count: ${enquiryData.guestCount}</p>
-          <p>Type of Event: ${enquiryData.typeOfEvent}</p>
-          <p>Event Date: ${formattedDate}</p>
+                    <p> Currency: ${enquiryData.currency}</p>
+      ${
+        enquiryData.currency === "percentage"
+          ? `<p>Percentage: ${enquiryData.percentage}%</p>`
+          : enquiryData.currency === "rupees"
+          ? `<p>Rupees: ${enquiryData.rupees}</p>`
+          : "" 
+      }
         </body>
       </html>
     `;
-
+ console.log("eventDetailEmailContent", eventDetailEmailContent);
     const enquiryThanksReplyEmailContent = `
       <html>
         <body>
@@ -52,22 +55,21 @@ exports.createEnquiry = async (req, res, next) => {
       </html>
     `;
 
- const transporter = nodemailer.createTransport({
-   service: "gmail",
-   auth: {
-     user: process.env.TAMTREE_EMAIL,
-     pass: process.env.TAMTREE_EMAIL_PASSWORD,
-   },
- });
-
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.TAMTREE_EMAIL,
+        pass: process.env.TAMTREE_EMAIL_PASSWORD,
+      },
+    });
 
     //enquired user email id
-    const VanakkamPDXMailOption = {
-      from: process.env.TAMTREE_EMAIL,
-      subject: "Enquiry Request Received",
-      to: enquiryData.email,
-      html: enquiryThanksReplyEmailContent,
-    };
+    // const VanakkamPDXMailOption = {
+    //   from: process.env.TAMTREE_EMAIL,
+    //   subject: "Enquiry Request Received",
+    //   to: enquiryData.email,
+    //   html: enquiryThanksReplyEmailContent,
+    // };
 
     const usersMailOptions = {
       from: enquiryData.email,
@@ -91,9 +93,9 @@ exports.createEnquiry = async (req, res, next) => {
         console.log("user's Email sent: " + info.response);
       }
     });
-console.log(newEnquiry);
+   
     res.json({
-      data: newEnquiry,
+      data: enquiryData,
       success: true,
       statusCode: 200,
     });

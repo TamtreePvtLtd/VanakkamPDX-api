@@ -25,6 +25,7 @@ app.use(
   })
 );
 var enquiryRouter = require("./routes/enquiry");
+var discountRouter = require("./routes/discount");
 
 app.use((req, res, next) => {
   const allowedOriginsWithCredentials = [
@@ -55,6 +56,7 @@ mongoose
   });
 
 app.use("/enquiry", enquiryRouter);
+app.use("/discount", discountRouter);
 
 //these middleware should at last but before error handlers
 app.use("*", (req, res, next) => {
